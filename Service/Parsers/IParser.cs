@@ -8,7 +8,8 @@ namespace Service.Parsers
 {
     interface IParser
     {
-        void Parse();
+        bool Parse();
+
 
     }
 }

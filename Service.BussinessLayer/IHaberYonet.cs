@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 
 namespace Service.Bussines
 {
-    interface IHaberYonet
+   public interface IHaberYonet
     {
-        void Kaydet(Haber h);
-        void Kaydet(List<Haber> lh);
+   
+        bool Kaydet(List<Haber> lh);
+
+        List<Haber> Goster();
+
+
     }
 }

@@ -1,0 +1,61 @@
+﻿@model Service.Models.Haber[]
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="~/SignalR/Hubs"></script>
+    <title>Index</title>
+
+
+    <script>
+        $(function () {
+
+            var chat = $.connection.chatHub;
+
+            var tablo = $('#tablo');
+
+
+
+            chat.client.sendMessage = function (name, message) {
+
+                tablo.html= message;
+            };
+
+            $.connection.hub.start().done(function () {
+              /*  $('#btnSendMessage').click(function () {
+                    alert('2');
+                    chat.server.send($username.val(), $message.val());
+
+                    $message.val('').focus();
+                });*/
+            });
+        });
+
+    </script>
+</head>
+<body>
+    <div id="tablo"> 
+        <table >
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.title)<br />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.pubdate)<br />
+                    </td>
+
+                </tr>
+            }
+            </table>
+</div>
+</body>
+</html>

@@ -8,13 +8,18 @@ using Service.Models;
 
 namespace Service.Bussines
 {
-    class HaberYonet : IHaberYonet
+   public class HaberYonet : IHaberYonet
     {
-        public void Kaydet(List<Haber> lh)
+        public List<Haber> Goster()
+        {
+            return Helper.Helper.db.Haberler.ToList();
+        }
+
+        public bool Kaydet(List<Haber> lh)
         {
 
-            
 
+            bool sonuc = false;
             List<Haber> Data;
 
             Data = Helper.Helper.db.Haberler.ToList();
@@ -32,6 +37,7 @@ namespace Service.Bussines
             foreach (Haber h in Insert)
             {
                 Helper.Helper.db.Haberler.Add(h);
+                sonuc = true;
             }
 
             foreach (Haber h in Update)
@@ -43,19 +49,17 @@ namespace Service.Bussines
                     result.description = h.description;
                     result.link = h.link;
                     result.title = h.title;
+                    sonuc=true;
                 }
             }
 
 
 
             Helper.Helper.db.SaveChanges();
-
+            return sonuc;
 
         }
 
-        public void Kaydet(Haber h)
-        {
-           
-        }
+
     }
 }

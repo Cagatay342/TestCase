@@ -22,8 +22,22 @@ namespace Service.Parsers
             _db = Helper.Helper._container.Resolve<IHaberYonet>();
         }
 
-        public void Parse()
+   
+
+        string GetXml(string link)
         {
+            string htmlCode = "";
+            using (WebClient client = new WebClient())
+            {
+                 htmlCode = client.DownloadString(link);
+            }
+            return htmlCode;
+        }
+
+        public bool Parse()
+        {
+            bool sonuc = false;
+
             string Xml = GetXml(_pub.getUri());
 
             XmlDocument xmlDoc = new XmlDocument();
@@ -33,7 +47,7 @@ namespace Service.Parsers
             var nodes = xmlDoc.SelectNodes(xpath);
 
             List<Haber> haberler = new List<Haber>();
-            
+
 
             foreach (XmlNode childrenNode in nodes)
             {
@@ -45,21 +59,12 @@ namespace Service.Parsers
                     link = childrenNode["link"].InnerText,
                     pubdate = DateTime.Parse(childrenNode["pubDate"].InnerText)
                 });
-              
+
             }
 
-            _db.Kaydet(haberler);
+            return _db.Kaydet(haberler);
 
-        }
 
-        string GetXml(string link)
-        {
-            string htmlCode = "";
-            using (WebClient client = new WebClient())
-            {
-                 htmlCode = client.DownloadString(link);
-            }
-            return htmlCode;
         }
     }
 }
