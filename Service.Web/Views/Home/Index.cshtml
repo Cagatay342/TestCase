@@ -25,7 +25,7 @@
 
             chat.client.sendMessage = function (name, message) {
 
-                tablo.html= message;
+                document.getElementById("tablo").innerHTML  = message;
             };
 
             $.connection.hub.start().done(function () {
@@ -41,7 +41,8 @@
     </script>
 </head>
 <body>
-    <div id="tablo"> 
+    <div id="tablo" name="tablo"> 
+        @DateTime.Now 
         <table >
             @foreach (var item in Model)
             {

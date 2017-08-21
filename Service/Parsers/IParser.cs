@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Service.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Service.Parsers
 {
     interface IParser
     {
-        bool Parse();
+        List<Haber> Parse();
 
 
     }

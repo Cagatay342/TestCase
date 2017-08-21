@@ -15,7 +15,7 @@ namespace Service.SignalR
 
         public void Send(string Html)
         {
-            HubProxy.Invoke("Send", "", "Yenile");
+            HubProxy.Invoke("Send", "", Html);
         }
         public SignalClient()
         {

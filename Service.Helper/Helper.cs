@@ -11,6 +11,5 @@ namespace Service.Helper
    public class Helper
     {
        public static IWindsorContainer _container;
-       public static  DataBaseContext db = new DataBaseContext();
     }
 }

@@ -9,10 +9,12 @@ namespace Service.Bussines
 {
    public interface IHaberYonet
     {
-   
-        bool Kaydet(List<Haber> lh);
+
+        List<Haber> Kaydet(List<Haber> lh);
 
         List<Haber> Goster();
+
+        string GosterTable();
 
 
     }

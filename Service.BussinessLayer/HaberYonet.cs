@@ -12,17 +12,41 @@ namespace Service.Bussines
     {
         public List<Haber> Goster()
         {
-            return Helper.Helper.db.Haberler.ToList();
+            return (new Models.Managers.DataBaseContext()).Haberler.ToList();
         }
 
-        public bool Kaydet(List<Haber> lh)
+        public string GosterTable()
+        {
+            List <Haber> x = Goster();
+
+            string sonuc = DateTime.Now.ToString();
+            sonuc = sonuc + "<table>";
+            foreach(var item in x)
+            {
+                sonuc = sonuc + "<tr>";
+                sonuc = sonuc + "<td>";
+                sonuc = sonuc + item.title + "<br/>";
+                sonuc = sonuc + "</td><td>";
+                sonuc = sonuc + item.pubdate + "<br/>";
+                sonuc = sonuc + "</td></tr>";
+
+            }
+            sonuc = sonuc + "</table>";
+
+            return sonuc;
+
+        }
+
+        public List<Haber> Kaydet(List<Haber> lh)
         {
 
 
-            bool sonuc = false;
-            List<Haber> Data;
+            List<Haber> sonuc = new List<Haber>();
 
-            Data = Helper.Helper.db.Haberler.ToList();
+            Models.Managers.DataBaseContext db = new Models.Managers.DataBaseContext();
+            List<Haber> Data = db.Haberler.ToList();
+            
+            // Helper.Helper.db.Haberler.ToList();
 
             var Update = from first in lh
                                        join second in Data
@@ -36,26 +60,27 @@ namespace Service.Bussines
 
             foreach (Haber h in Insert)
             {
-                Helper.Helper.db.Haberler.Add(h);
-                sonuc = true;
+                db.Haberler.Add(h);
+                sonuc.Add(h);
             }
 
             foreach (Haber h in Update)
             {
-                var result = Helper.Helper.db.Haberler.SingleOrDefault(b => b.guid == h.guid);
+                var result = db.Haberler.SingleOrDefault(b => b.guid == h.guid);
                 if (result != null && result.pubdate != h.pubdate)
                 {
                     result.pubdate = h.pubdate;
                     result.description = h.description;
                     result.link = h.link;
                     result.title = h.title;
-                    sonuc=true;
+                    sonuc.Add(result);
+                   
                 }
             }
 
 
 
-            Helper.Helper.db.SaveChanges();
+            db.SaveChanges();
             return sonuc;
 
         }

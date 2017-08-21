@@ -34,10 +34,9 @@ namespace Service.Parsers
             return htmlCode;
         }
 
-        public bool Parse()
+        public List<Haber> Parse()
         {
-            bool sonuc = false;
-
+        
             string Xml = GetXml(_pub.getUri());
 
             XmlDocument xmlDoc = new XmlDocument();
