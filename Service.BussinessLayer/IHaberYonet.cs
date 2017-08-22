@@ -16,6 +16,8 @@ namespace Service.Bussines
 
         string GosterTable();
 
+        List<Kisi> GosterKisi();
+
 
     }
 }

@@ -18,6 +18,7 @@ using Service.SignalR;
 using Service.Wcf;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -37,9 +38,9 @@ namespace Service
 
             Helper.Helper._container = new WindsorContainer();
             Helper.Helper._container.Register(
-                 Component.For<IPublisher>().ImplementedBy<MilliyetTech>(),
-                 Component.For<IParser>().ImplementedBy<Parser>(),
-                 Component.For<IHaberYonet>().ImplementedBy<HaberYonet>()
+                 Castle.MicroKernel.Registration.Component.For<IPublisher>().ImplementedBy<MilliyetTech>(),
+                 Castle.MicroKernel.Registration.Component.For<IParser>().ImplementedBy<Parser>(),
+                 Castle.MicroKernel.Registration.Component.For<IHaberYonet>().ImplementedBy<HaberYonet>()
                 );
 
         }
@@ -94,28 +95,60 @@ namespace Service
 
             //varsa degisiklikleri listeye alalım ona gore ekranları yenileyecegiz ve mail atma islemini baslatacagız 
 
-            List<Haber> x = p.Parse();
+            List<Haber> guncelhaberlist = p.Parse();
 
-            if (x.Count>0)
+            if (guncelhaberlist.Count>0)
             {
                 //signalr ile yeni tabloyu gonder
                 //html ciktisini hazirlayip tum browserlarda otomatik yenileyelim
                 IHaberYonet _db = Helper.Helper._container.Resolve<IHaberYonet>();
                 scon.Send(_db.GosterTable());
-
-
-
-                //mail gonder threadler ile 
-
                 Console.WriteLine(DateTime.Now.ToString() + " SignalR tetiklendi");
+
+
+                BackgroundWorker worker = new BackgroundWorker();
+                worker.DoWork += (obj, xe) => WorkerDoWork(guncelhaberlist,_db.GosterKisi());
+                worker.RunWorkerAsync();
+
+
 
 
 
             }
 
+
+
             //islem bitti timeri tekrar baslatabiliriz.
             ((Timer)sender).Start();
 
+        }
+
+
+        class Mail
+        {
+
+            public string Kime { get; set; }
+            public string Mesaj { get; set; }
+
+        }
+
+     static   private void WorkerDoWork(List<Haber> haberler, List<Kisi> Kisiler)
+        {
+            foreach (var haber in haberler)
+            {
+                foreach (var kisi in Kisiler)
+                {
+                    System.Threading.ThreadPool.QueueUserWorkItem((obj) =>
+                {
+                    Mail m = (Mail)obj;
+                    Console.WriteLine(m.Kime + " Mail Gonderildi");
+
+
+                },new Mail { Kime = kisi.Mail,Mesaj=haber.title }
+                );
+                
+                }
+            }
         }
     }
 }

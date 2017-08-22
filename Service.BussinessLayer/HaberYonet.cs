@@ -15,6 +15,13 @@ namespace Service.Bussines
             return (new Models.Managers.DataBaseContext()).Haberler.ToList();
         }
 
+        public List<Kisi> GosterKisi()
+        {
+            return (new Models.Managers.DataBaseContext()).Kisiler.ToList();
+        }
+
+
+        //signalr de kullanılmak uzere direkt html ciktiyi gonderip browserlarda degistirmeyi saglayabiliriz
         public string GosterTable()
         {
             List <Haber> x = Goster();
@@ -48,22 +55,28 @@ namespace Service.Bussines
             
             // Helper.Helper.db.Haberler.ToList();
 
+
+            // Kayit edilicek kayitlari datayla karsılastirip once guncellenme ihtimali olanları 
             var Update = from first in lh
                                        join second in Data
                                        on first.guid equals second.guid 
                                        select first;
 
+
+            //sonrada Elimizdeki listeyi guncellenecekler ile kiyaslayıp kayıt edilecekleri bulalım
             var Insert = lh.Except(Update);
 
-            //Insert = lh.Except(Data);
-            //Update = Insert.Except(lh);
 
+
+            //kayit edilecekleri contexte ekleyelim ve sonuc listesinede yenidegisikleri tutmak uzere ekleyelim
             foreach (Haber h in Insert)
             {
                 db.Haberler.Add(h);
                 sonuc.Add(h);
             }
 
+
+            //guncellenicek kayitlarda bi degisiklik olduysa guncelleyelim ve sonuc listesine atalaım
             foreach (Haber h in Update)
             {
                 var result = db.Haberler.SingleOrDefault(b => b.guid == h.guid);

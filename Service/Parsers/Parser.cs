@@ -14,8 +14,13 @@ namespace Service.Parsers
 {
     class Parser :IParser
     {
+        //Cekilecek Xml hangi yayincinin
         IPublisher _pub=null;
+
+        //database contexi iceren manager
         IHaberYonet _db = null;
+
+
         public  Parser()
         {
             _pub = Helper.Helper._container.Resolve<IPublisher>();
@@ -23,7 +28,7 @@ namespace Service.Parsers
         }
 
    
-
+        //Linkden Xmli download edecek fonksiyon
         string GetXml(string link)
         {
             string htmlCode = "";
@@ -36,31 +41,28 @@ namespace Service.Parsers
 
         public List<Haber> Parse()
         {
-        
+            //xmli indrileim yayincidan gelen uri ile 
             string Xml = GetXml(_pub.getUri());
+
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(Xml);
 
-            string xpath = "rss/channel/item";
+
+
+            string xpath = _pub.getXpath();
             var nodes = xmlDoc.SelectNodes(xpath);
 
             List<Haber> haberler = new List<Haber>();
 
-
+            //Cekilen xml nesnlerini listeye atalim
             foreach (XmlNode childrenNode in nodes)
             {
-                haberler.Add(new Haber
-                {
-                    title = childrenNode["title"].InnerText,
-                    description = childrenNode["description"].InnerText,
-                    guid = childrenNode["guid"].InnerText,
-                    link = childrenNode["link"].InnerText,
-                    pubdate = DateTime.Parse(childrenNode["pubDate"].InnerText)
-                });
+                haberler.Add(_pub.getHaber(childrenNode));
 
             }
 
+            //Listeyi managera kayit edildmek uzere gonderebiliriz.
             return _db.Kaydet(haberler);
 
 
